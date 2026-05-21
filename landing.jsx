@@ -201,7 +201,7 @@ function PendingPreviewCard({ booking, idx }) {
 function LandingHow() {
   const steps = [
     { n: '01', title: 'Configurás', body: 'Servicios, precios y horario. Toma 5 minutos.', icon: 'settings' },
-    { n: '02', title: 'Compartís',  body: 'Pegás tu link bylo.app/tu-negocio donde respondés mensajes.', icon: 'link' },
+    { n: '02', title: 'Chateás',    body: 'Tu cliente escribe, Bylo responde al instante: cotiza, agenda y confirma solo.', icon: 'chat' },
     { n: '03', title: 'Cobrás',     body: 'La IA cotiza y agenda. Vos solo aceptás en el panel.', icon: 'sparkles' },
   ];
   return (
