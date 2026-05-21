@@ -184,8 +184,16 @@ const relativeTime = (iso) => {
 
 // ─── SHARED UI ─────────────────────────────────────────────────────────────
 const Logo = ({ size = 22, color = COLORS.ink }) => (
-  <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 6, fontFamily: FONTS.display, fontWeight: 800, fontSize: size, color, letterSpacing: '-0.04em', lineHeight: 1 }}>
-    <span style={{ display: 'inline-block', width: size * 0.42, height: size * 0.42, borderRadius: '50%', background: COLORS.green, transform: 'translateY(1px)' }} />
+  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: FONTS.display, fontWeight: 800, fontSize: size, color, letterSpacing: '-0.04em', lineHeight: 1 }}>
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      width: size * 1.5, height: size * 1.5, borderRadius: '50%',
+      overflow: 'hidden', flexShrink: 0,
+      border: `1.5px solid ${COLORS.line}`,
+      background: COLORS.white,
+    }}>
+      <img src="logo.png" alt="Bylo" style={{ width: '85%', height: '85%', objectFit: 'contain', display: 'block' }} />
+    </span>
     bylo
   </span>
 );
