@@ -1,6 +1,16 @@
 // ─── BYLO LANDING ───────────────────────────────────────────────────────────
 const { useState, useEffect, useRef } = React;
 
+function useMobile() {
+  const [m, setM] = React.useState(() => window.innerWidth < 768);
+  React.useEffect(() => {
+    const h = () => setM(window.innerWidth < 768);
+    window.addEventListener('resize', h);
+    return () => window.removeEventListener('resize', h);
+  }, []);
+  return m;
+}
+
 function Landing({ onNavigate }) {
   return (
     <div data-screen-label="01 Landing" style={{ background: COLORS.white, minHeight: '100vh', color: COLORS.ink }}>
@@ -16,6 +26,7 @@ function Landing({ onNavigate }) {
 }
 
 function LandingNav({ onNavigate }) {
+  const mobile = useMobile();
   return (
     <header style={{
       position: 'sticky', top: 0, zIndex: 50,
@@ -24,19 +35,21 @@ function LandingNav({ onNavigate }) {
       borderBottom: `1px solid ${COLORS.line}`,
     }}>
       <div style={{
-        maxWidth: 1200, margin: '0 auto', padding: '16px 32px',
+        maxWidth: 1200, margin: '0 auto', padding: mobile ? '14px 20px' : '16px 32px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
         <Logo size={22} />
-        <nav style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
-          <a href="#how"        onClick={e => e.preventDefault()} style={navLinkStyle}>Cómo funciona</a>
-          <a href="#industries" onClick={e => e.preventDefault()} style={navLinkStyle}>Para quién</a>
-          <a href="#chat"       onClick={e => { e.preventDefault(); onNavigate('chat'); }} style={navLinkStyle}>Ver demo</a>
-        </nav>
+        {!mobile && (
+          <nav style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
+            <a href="#how"        onClick={e => e.preventDefault()} style={navLinkStyle}>Cómo funciona</a>
+            <a href="#industries" onClick={e => e.preventDefault()} style={navLinkStyle}>Para quién</a>
+            <a href="#chat"       onClick={e => { e.preventDefault(); onNavigate('chat'); }} style={navLinkStyle}>Ver demo</a>
+          </nav>
+        )}
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <Button variant="ghost" size="sm" onClick={() => onNavigate('dashboard')}>Entrar</Button>
+          {!mobile && <Button variant="ghost" size="sm" onClick={() => onNavigate('dashboard')}>Entrar</Button>}
           <Button variant="primary" size="sm" icon="arrow" onClick={() => onNavigate('onboarding')}>
-            Crear mi link gratis
+            {mobile ? 'Empezar gratis' : 'Crear mi link gratis'}
           </Button>
         </div>
       </div>
@@ -46,16 +59,18 @@ function LandingNav({ onNavigate }) {
 const navLinkStyle = { fontSize: 14, color: COLORS.stone, textDecoration: 'none', fontWeight: 500 };
 
 function LandingHero({ onNavigate }) {
+  const mobile = useMobile();
   return (
     <section style={{
-      maxWidth: 1200, margin: '0 auto', padding: '88px 32px 56px',
-      display: 'grid', gap: 56,
+      maxWidth: 1200, margin: '0 auto',
+      padding: mobile ? '52px 20px 40px' : '88px 32px 56px',
+      display: 'grid', gap: mobile ? 36 : 56,
     }}>
-      <div style={{ maxWidth: 820, display: 'grid', gap: 28 }}>
+      <div style={{ maxWidth: 820, display: 'grid', gap: mobile ? 20 : 28 }}>
         <Kicker>Para negocios de servicios</Kicker>
         <h1 style={{
           fontFamily: FONTS.display, fontWeight: 800,
-          fontSize: 'clamp(44px, 6.5vw, 84px)', lineHeight: 0.98,
+          fontSize: 'clamp(38px, 6.5vw, 84px)', lineHeight: 1.02,
           letterSpacing: '-0.04em', margin: 0, color: COLORS.ink,
           textWrap: 'pretty',
         }}>
@@ -63,22 +78,24 @@ function LandingHero({ onNavigate }) {
           <span style={{ color: COLORS.stone }}>Bylo agenda la cita.</span>
         </h1>
         <p style={{
-          fontSize: 19, lineHeight: 1.55, color: COLORS.stone, margin: 0,
+          fontSize: mobile ? 16 : 19, lineHeight: 1.55, color: COLORS.stone, margin: 0,
           maxWidth: 600, fontWeight: 400,
         }}>
           Una IA conversacional cotiza y agenda en tu chat 24/7. Vos solo aceptás
           las citas cuando aparecen en tu panel. Cero respuestas manuales.
         </p>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: mobile ? 'column' : 'row', gap: 12, flexWrap: 'wrap', alignItems: mobile ? 'stretch' : 'center' }}>
           <Button size="lg" icon="arrow" onClick={() => onNavigate('onboarding')}>
             Crear mi link gratis
           </Button>
           <Button size="lg" variant="secondary" icon="chat" onClick={() => onNavigate('chat')}>
             Probar el chat
           </Button>
-          <span style={{ fontSize: 13, color: COLORS.stoneSoft, marginLeft: 8 }}>
-            Sin tarjeta · 30 segundos
-          </span>
+          {!mobile && (
+            <span style={{ fontSize: 13, color: COLORS.stoneSoft, marginLeft: 8 }}>
+              Sin tarjeta · 30 segundos
+            </span>
+          )}
         </div>
       </div>
 
@@ -88,23 +105,26 @@ function LandingHero({ onNavigate }) {
 }
 
 function HeroMockup() {
+  const mobile = useMobile();
   return (
     <div style={{
-      display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 24,
+      display: 'grid',
+      gridTemplateColumns: mobile ? '1fr' : '1.1fr 1fr',
+      gap: 16,
       alignItems: 'stretch',
     }}>
       {/* Phone-style chat preview */}
       <div style={{
-        background: COLORS.chatBg, borderRadius: 24, padding: 28,
+        background: COLORS.chatBg, borderRadius: 20, padding: mobile ? 20 : 28,
         boxShadow: SHADOWS.lg, border: `1px solid ${COLORS.line}`,
-        position: 'relative', overflow: 'hidden', minHeight: 440,
+        position: 'relative', overflow: 'hidden', minHeight: mobile ? 320 : 440,
       }}>
         <div style={{
           position: 'absolute', inset: 0,
           backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.04) 1px, transparent 0)',
           backgroundSize: '14px 14px', opacity: 0.6,
         }} />
-        <div style={{ position: 'relative', display: 'grid', gap: 12, maxWidth: 380, margin: '24px auto 0' }}>
+        <div style={{ position: 'relative', display: 'grid', gap: 10, maxWidth: 380, margin: '16px auto 0' }}>
           <ChatBubblePreview side="bot" text="¡Hola! Soy el asistente de Barbería Don Pepe 💈 ¿En qué te ayudo?" time="10:32" />
           <ChatBubblePreview side="user" text="quiero un corte + barba" time="10:32" />
           <ChatBubblePreview side="bot" text="Perfecto. ¿Tenés barba larga o corta?" time="10:32" />
@@ -112,34 +132,36 @@ function HeroMockup() {
           <ChatBubblePreview side="bot" text="Precio final: ₡14,000. Tengo disponible mañana a las 10:00, 11:30 o 14:00 ¿cuál te viene?" time="10:33" highlight />
         </div>
       </div>
-      {/* Dashboard preview */}
-      <div style={{
-        background: COLORS.white, borderRadius: 24, padding: 28,
-        boxShadow: SHADOWS.lg, border: `1px solid ${COLORS.line}`,
-        display: 'grid', gap: 14, minHeight: 440,
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <Kicker>Panel · Don Pepe</Kicker>
-            <div style={{ fontFamily: FONTS.display, fontWeight: 800, fontSize: 22, marginTop: 6, letterSpacing: '-0.02em' }}>
-              Citas pendientes
-            </div>
-          </div>
-          <Badge color="ink">3 nuevas</Badge>
-        </div>
-        {MOCK_BOOKINGS.slice(0, 3).map((b, i) => (
-          <PendingPreviewCard key={b.id} booking={b} idx={i} />
-        ))}
+      {/* Dashboard preview — hidden on mobile to keep hero clean */}
+      {!mobile && (
         <div style={{
-          marginTop: 'auto', padding: 14, background: COLORS.greenSoft,
-          borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10,
+          background: COLORS.white, borderRadius: 20, padding: 28,
+          boxShadow: SHADOWS.lg, border: `1px solid ${COLORS.line}`,
+          display: 'grid', gap: 14, minHeight: 440,
         }}>
-          <Icon name="zap" size={16} color={COLORS.greenDeep} />
-          <span style={{ fontSize: 13, color: COLORS.greenDeep, fontWeight: 600 }}>
-            Realtime activo · llegan sin recargar
-          </span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <Kicker>Panel · Don Pepe</Kicker>
+              <div style={{ fontFamily: FONTS.display, fontWeight: 800, fontSize: 22, marginTop: 6, letterSpacing: '-0.02em' }}>
+                Citas pendientes
+              </div>
+            </div>
+            <Badge color="ink">3 nuevas</Badge>
+          </div>
+          {MOCK_BOOKINGS.slice(0, 3).map((b, i) => (
+            <PendingPreviewCard key={b.id} booking={b} idx={i} />
+          ))}
+          <div style={{
+            marginTop: 'auto', padding: 14, background: COLORS.greenSoft,
+            borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10,
+          }}>
+            <Icon name="zap" size={16} color={COLORS.greenDeep} />
+            <span style={{ fontSize: 13, color: COLORS.greenDeep, fontWeight: 600 }}>
+              Realtime activo · llegan sin recargar
+            </span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -199,6 +221,7 @@ function PendingPreviewCard({ booking, idx }) {
 }
 
 function LandingHow() {
+  const mobile = useMobile();
   const steps = [
     { n: '01', title: 'Configurás', body: 'Servicios, precios y horario. Toma 5 minutos.', icon: 'settings' },
     { n: '02', title: 'Chateás',    body: 'Tu cliente escribe, Bylo responde al instante: cotiza, agenda y confirma solo.', icon: 'chat' },
@@ -206,22 +229,22 @@ function LandingHow() {
   ];
   return (
     <section id="how" style={{ borderTop: `1px solid ${COLORS.line}`, background: COLORS.white }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '96px 32px' }}>
-        <div style={{ display: 'grid', gap: 12, marginBottom: 56 }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: mobile ? '64px 20px' : '96px 32px' }}>
+        <div style={{ display: 'grid', gap: 12, marginBottom: mobile ? 36 : 56 }}>
           <Kicker>Cómo funciona</Kicker>
           <h2 style={{
-            fontFamily: FONTS.display, fontSize: 'clamp(36px, 5vw, 56px)',
+            fontFamily: FONTS.display, fontSize: 'clamp(32px, 5vw, 56px)',
             fontWeight: 800, letterSpacing: '-0.03em', margin: 0, lineHeight: 1,
           }}>
             Tres pasos. Cero fricción.
           </h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : 'repeat(3, 1fr)', gap: 12 }}>
           {steps.map(s => (
             <div key={s.n} style={{
-              padding: 28, border: `1px solid ${COLORS.line}`, borderRadius: 16,
-              display: 'grid', gap: 16, alignContent: 'start', minHeight: 220,
-              background: COLORS.white, transition: 'transform 200ms ease, border-color 200ms ease',
+              padding: mobile ? 22 : 28, border: `1px solid ${COLORS.line}`, borderRadius: 16,
+              display: 'grid', gap: 14, alignContent: 'start',
+              background: COLORS.white, transition: 'border-color 200ms ease',
             }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = COLORS.ink; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = COLORS.line; }}
@@ -235,7 +258,7 @@ function LandingHow() {
                   <Icon name={s.icon} size={18} color={COLORS.ink} />
                 </div>
               </div>
-              <div style={{ fontFamily: FONTS.display, fontWeight: 800, fontSize: 28, letterSpacing: '-0.02em' }}>
+              <div style={{ fontFamily: FONTS.display, fontWeight: 800, fontSize: 26, letterSpacing: '-0.02em' }}>
                 {s.title}
               </div>
               <div style={{ color: COLORS.stone, fontSize: 15, lineHeight: 1.5 }}>{s.body}</div>
@@ -287,6 +310,7 @@ function LandingStat() {
 }
 
 function LandingIndustries() {
+  const mobile = useMobile();
   const items = [
     { icon: 'scissors', title: 'Barberías',     body: 'Cortes, barba, degradés. Precios variables por estilo.' },
     { icon: 'paw',      title: 'Veterinarias',  body: 'Consultas, baños, vacunas. Diferentes según tamaño.' },
@@ -297,25 +321,29 @@ function LandingIndustries() {
   ];
   return (
     <section id="industries" style={{ background: COLORS.white }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '96px 32px' }}>
-        <div style={{ display: 'grid', gap: 12, marginBottom: 48 }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: mobile ? '64px 20px' : '96px 32px' }}>
+        <div style={{ display: 'grid', gap: 12, marginBottom: mobile ? 32 : 48 }}>
           <Kicker>Industrias</Kicker>
           <h2 style={{
-            fontFamily: FONTS.display, fontSize: 'clamp(36px, 5vw, 56px)',
-            fontWeight: 800, letterSpacing: '-0.03em', margin: 0, lineHeight: 1, maxWidth: 760,
+            fontFamily: FONTS.display, fontSize: 'clamp(28px, 5vw, 56px)',
+            fontWeight: 800, letterSpacing: '-0.03em', margin: 0, lineHeight: 1.1, maxWidth: 760,
           }}>
-            Pensado para cualquier servicio<br />donde el precio depende del cliente.
+            Pensado para cualquier servicio donde el precio depende del cliente.
           </h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: COLORS.line, border: `1px solid ${COLORS.line}`, borderRadius: 20, overflow: 'hidden' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: mobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+          gap: 1, background: COLORS.line, border: `1px solid ${COLORS.line}`, borderRadius: 20, overflow: 'hidden',
+        }}>
           {items.map(it => (
             <div key={it.title} style={{
-              padding: 32, background: COLORS.white, display: 'grid', gap: 14,
-              alignContent: 'start', minHeight: 200,
+              padding: mobile ? 20 : 32, background: COLORS.white, display: 'grid', gap: 12,
+              alignContent: 'start',
             }}>
-              <Icon name={it.icon} size={22} color={COLORS.ink} />
-              <div style={{ fontFamily: FONTS.display, fontWeight: 700, fontSize: 22, letterSpacing: '-0.02em' }}>{it.title}</div>
-              <div style={{ color: COLORS.stone, fontSize: 14.5, lineHeight: 1.5 }}>{it.body}</div>
+              <Icon name={it.icon} size={20} color={COLORS.ink} />
+              <div style={{ fontFamily: FONTS.display, fontWeight: 700, fontSize: mobile ? 18 : 22, letterSpacing: '-0.02em' }}>{it.title}</div>
+              <div style={{ color: COLORS.stone, fontSize: 13.5, lineHeight: 1.5 }}>{it.body}</div>
             </div>
           ))}
         </div>
@@ -325,23 +353,24 @@ function LandingIndustries() {
 }
 
 function LandingCTA({ onNavigate }) {
+  const mobile = useMobile();
   return (
     <section style={{ borderTop: `1px solid ${COLORS.line}`, background: COLORS.mist }}>
       <div style={{
-        maxWidth: 900, margin: '0 auto', padding: '120px 32px',
-        display: 'grid', gap: 28, justifyItems: 'center', textAlign: 'center',
+        maxWidth: 900, margin: '0 auto', padding: mobile ? '72px 20px' : '120px 32px',
+        display: 'grid', gap: 24, justifyItems: 'center', textAlign: 'center',
       }}>
         <h2 style={{
-          fontFamily: FONTS.display, fontSize: 'clamp(40px, 6vw, 72px)',
-          fontWeight: 800, letterSpacing: '-0.035em', margin: 0, lineHeight: 1,
+          fontFamily: FONTS.display, fontSize: 'clamp(32px, 6vw, 72px)',
+          fontWeight: 800, letterSpacing: '-0.035em', margin: 0, lineHeight: 1.05,
           textWrap: 'balance',
         }}>
           ¿Listo para dejar de<br />responder mensajes?
         </h2>
-        <p style={{ fontSize: 18, color: COLORS.stone, maxWidth: 520, margin: 0, lineHeight: 1.5 }}>
+        <p style={{ fontSize: mobile ? 16 : 18, color: COLORS.stone, maxWidth: 520, margin: 0, lineHeight: 1.5 }}>
           Configurá tu link en 5 minutos. Gratis mientras dure el hackathon.
         </p>
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'flex', flexDirection: mobile ? 'column' : 'row', gap: 12, width: mobile ? '100%' : 'auto' }}>
           <Button size="lg" icon="arrow" onClick={() => onNavigate('onboarding')}>
             Crear mi link gratis
           </Button>
@@ -355,13 +384,16 @@ function LandingCTA({ onNavigate }) {
 }
 
 function LandingFooter() {
+  const mobile = useMobile();
   return (
     <footer style={{ background: COLORS.white, borderTop: `1px solid ${COLORS.line}` }}>
       <div style={{
-        maxWidth: 1200, margin: '0 auto', padding: '56px 32px 32px',
-        display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 48,
+        maxWidth: 1200, margin: '0 auto', padding: mobile ? '40px 20px 28px' : '56px 32px 32px',
+        display: 'grid',
+        gridTemplateColumns: mobile ? '1fr 1fr' : '1.4fr 1fr 1fr 1fr',
+        gap: mobile ? 32 : 48,
       }}>
-        <div style={{ display: 'grid', gap: 14 }}>
+        <div style={{ display: 'grid', gap: 14, gridColumn: mobile ? '1 / -1' : 'auto' }}>
           <Logo size={22} />
           <div style={{ fontSize: 14, color: COLORS.stone, lineHeight: 1.5, maxWidth: 280 }}>
             La IA que agenda tus citas mientras vos trabajás.
@@ -372,7 +404,7 @@ function LandingFooter() {
           { h: 'Recursos',   items: ['Documentación', 'Ejemplos', 'Estado'] },
           { h: 'Compañía',   items: ['Sobre Bylo', 'Contacto', 'Privacidad'] },
         ].map(col => (
-          <div key={col.h} style={{ display: 'grid', gap: 12 }}>
+          <div key={col.h} style={{ display: 'grid', gap: 12, alignContent: 'start' }}>
             <div style={{ fontFamily: FONTS.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: COLORS.stoneSoft }}>
               {col.h}
             </div>
@@ -383,8 +415,10 @@ function LandingFooter() {
         ))}
       </div>
       <div style={{
-        maxWidth: 1200, margin: '0 auto', padding: '24px 32px',
-        borderTop: `1px solid ${COLORS.line}`, display: 'flex', justifyContent: 'space-between',
+        maxWidth: 1200, margin: '0 auto', padding: mobile ? '16px 20px' : '24px 32px',
+        borderTop: `1px solid ${COLORS.line}`,
+        display: 'flex', flexDirection: mobile ? 'column' : 'row',
+        justifyContent: 'space-between', gap: 4,
         fontSize: 12, color: COLORS.stoneSoft, fontFamily: FONTS.mono, letterSpacing: '0.02em',
       }}>
         <div>© 2026 Bylo. Construido para Avify · Hackathon CRTW 2026.</div>
