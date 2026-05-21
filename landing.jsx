@@ -248,31 +248,37 @@ function LandingHow() {
 }
 
 function LandingStat() {
+  const [mobile, setMobile] = React.useState(() => window.innerWidth < 768);
+  React.useEffect(() => {
+    const handler = () => setMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+
   return (
     <section style={{
       borderTop: `1px solid ${COLORS.line}`,
       background: COLORS.ink, color: COLORS.white,
+      overflow: 'hidden',
     }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '120px 32px', display: 'grid', gap: 32 }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: mobile ? '72px 24px 64px' : '120px 32px 100px', display: 'grid', gap: 40 }}>
         <Kicker color={COLORS.stoneSoft}>El cambio</Kicker>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'end' }}>
-          <div style={{
-            fontFamily: FONTS.display, fontWeight: 800,
-            fontSize: 'clamp(80px, 16vw, 220px)', lineHeight: 0.85,
-            letterSpacing: '-0.06em',
-          }}>
-            30 segundos.
+        <div style={{
+          fontFamily: FONTS.display, fontWeight: 800,
+          fontSize: 'clamp(52px, 14vw, 220px)', lineHeight: 0.88,
+          letterSpacing: '-0.06em',
+        }}>
+          30 segundos.
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: mobile ? 32 : 64, alignItems: 'start' }}>
+          <div style={{ fontSize: mobile ? 18 : 22, lineHeight: 1.4, fontWeight: 500, textWrap: 'pretty', maxWidth: 480 }}>
+            Es lo que tarda Bylo en cotizar, agendar y confirmar una cita.
+            Lo que antes te costaba 8 mensajes y media hora distraído.
           </div>
-          <div style={{ display: 'grid', gap: 16, paddingBottom: 12 }}>
-            <div style={{ fontSize: 22, lineHeight: 1.35, fontWeight: 500, textWrap: 'pretty' }}>
-              Es lo que tarda Bylo en cotizar, agendar y confirmar una cita.
-              Lo que antes te costaba 8 mensajes y media hora distraído.
-            </div>
-            <div style={{ display: 'flex', gap: 32, marginTop: 12, fontFamily: FONTS.mono, fontSize: 12, color: COLORS.stoneSoft }}>
-              <div><div style={{ color: COLORS.white, fontSize: 28, fontFamily: FONTS.display, fontWeight: 800 }}>24/7</div>respondiendo</div>
-              <div><div style={{ color: COLORS.white, fontSize: 28, fontFamily: FONTS.display, fontWeight: 800 }}>0</div>apps que aprender</div>
-              <div><div style={{ color: COLORS.green, fontSize: 28, fontFamily: FONTS.display, fontWeight: 800 }}>↑42%</div>conversión</div>
-            </div>
+          <div style={{ display: 'flex', gap: mobile ? 24 : 40, fontFamily: FONTS.mono, fontSize: 12, color: COLORS.stoneSoft }}>
+            <div><div style={{ color: COLORS.white, fontSize: 28, fontFamily: FONTS.display, fontWeight: 800 }}>24/7</div>respondiendo</div>
+            <div><div style={{ color: COLORS.white, fontSize: 28, fontFamily: FONTS.display, fontWeight: 800 }}>0</div>apps que aprender</div>
+            <div><div style={{ color: COLORS.green, fontSize: 28, fontFamily: FONTS.display, fontWeight: 800 }}>↑42%</div>conversión</div>
           </div>
         </div>
       </div>
